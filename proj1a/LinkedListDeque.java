@@ -99,7 +99,7 @@ public class LinkedListDeque<T> {
         return null;
     }
 
-    public T getElementHelper(Node<T> s, int index, int cur, boolean reverse) {
+    private T getElementHelper(Node<T> s, int index, int cur, boolean reverse) {
         if (index == cur) {
            return s.value;
         }
