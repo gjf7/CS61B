@@ -35,7 +35,13 @@ public class MergeSort {
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
         // Your code here!
-        return null;
+        Queue<Queue<Item>> newQueue = new Queue<>();
+        for (Item item: items) {
+            Queue<Item> itemQueue = new Queue<>();
+            itemQueue.enqueue(item);
+            newQueue.enqueue(itemQueue);
+        }
+        return newQueue;
     }
 
     /**
@@ -53,14 +59,54 @@ public class MergeSort {
      */
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
-        // Your code here!
-        return null;
+        Queue<Item> mergedQueue = new Queue<>();
+        while (!q1.isEmpty() || !q2.isEmpty()) {
+            Item minItem = getMin(q1, q2);
+            mergedQueue.enqueue(minItem);
+        }
+        return mergedQueue;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
-        // Your code here!
-        return items;
+        Queue<Queue<Item>> singleItemQueue = makeSingleItemQueues(items);
+        if (items.size() < 2) {
+            return singleItemQueue.dequeue();
+        }
+        int middle = items.size() / 2;
+        Queue<Item> leftQueue = new Queue<>();
+        Queue<Item> rightQueue = new Queue<>();
+        for (int i = 0; i < middle; i++) {
+            leftQueue.enqueue(singleItemQueue.dequeue().peek());
+        }
+
+        while (!singleItemQueue.isEmpty()) {
+            rightQueue.enqueue(singleItemQueue.dequeue().peek());
+        }
+        Queue<Item> sortedLeft = mergeSort(leftQueue);
+        Queue<Item> sortedRight = mergeSort(rightQueue);
+        return mergeSortedQueues(sortedLeft, sortedRight);
+    }
+
+    public static void main(String[] args) {
+        Queue<Integer> arr = new Queue<>();
+        for (int i = 50; i >= 0; i--) {
+            arr.enqueue(i);
+        }
+        for (int el: arr) {
+            System.out.print(el + " ");
+        }
+
+
+        Queue<Integer> sortedArr = MergeSort.mergeSort(arr);
+        System.out.println("Original array:");
+        for (int el: arr) {
+            System.out.print(el + " ");
+        }
+        System.out.println("Sorted array:");
+        for (int el: sortedArr) {
+            System.out.print(el + " ");
+        }
     }
 }
