@@ -1,3 +1,4 @@
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Queue;
 
 public class QuickSort {
@@ -71,20 +72,27 @@ public class QuickSort {
         Queue<Item> equal = new Queue<>();
         Queue<Item> greater = new Queue<>();
         partition(items, pivot, less, equal, greater);
-        quickSort(less);
-        quickSort(greater);
+        if (!less.isEmpty()) {
+            less = quickSort(less);
+        }
+        if (!greater.isEmpty()) {
+            greater = quickSort(greater);
+        }
         return catenate(catenate(less, equal), greater);
     }
 
     public static void main(String[] args) {
         Queue<Integer> arr = new Queue<>();
-        for (int i = 50; i >= 0; i--) {
-            arr.enqueue(i);
-        }
-        for (int el: arr) {
-            System.out.print(el + " ");
-        }
-
+        arr.enqueue(4);
+        arr.enqueue(4);
+        arr.enqueue(4);
+        arr.enqueue(3);
+        arr.enqueue(5);
+        arr.enqueue(8);
+        arr.enqueue(8);
+        arr.enqueue(9);
+        arr.enqueue(9);
+        arr.enqueue(6);
 
         Queue<Integer> sortedArr = MergeSort.mergeSort(arr);
         System.out.println("Original array:");
