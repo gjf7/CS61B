@@ -51,8 +51,8 @@ public class LinkedListDeque<T> {
             return null;
         }
         T removedItemValue = sentinel.pre.getValue();
-        sentinel.pre = sentinel.pre.pre;
         sentinel.pre.pre.next = sentinel;
+        sentinel.pre = sentinel.pre.pre;
         size -= 1;
         return removedItemValue;
     }
@@ -61,23 +61,23 @@ public class LinkedListDeque<T> {
         if (index < 0 && index >= size) {
             return null;
         }
-        int idx;
+        int currentIndex;
         Node<T> node;
         if (index < size / 2) {
-            idx = 0;
+            currentIndex = 0;
             node = sentinel.next;
 
-            while (idx < index) {
+            while (currentIndex < index) {
                 node = node.next;
-                idx += 1;
+                currentIndex += 1;
             }
         } else {
-            idx = size - 1;
+            currentIndex = size - 1;
             node = sentinel.pre;
 
-            while (idx > index) {
+            while (currentIndex > index) {
                 node = node.pre;
-                idx -= 1;
+                currentIndex -= 1;
             }
         }
         return node.getValue();
