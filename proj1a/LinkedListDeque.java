@@ -1,121 +1,108 @@
+
 public class LinkedListDeque<T> {
     /*
-    * invariant:
-    *       1.sentinel's prev always point to last node
-    *       2.last node's next always point to sentinel
-    */
+     * invariant:
+     * 1. sentinel node's pre always point to last node;
+     * 2. last node's next always point to sentinel node
+     */
     private final Node<T> sentinel;
     private int size;
 
     public LinkedListDeque() {
-        sentinel = new Node<T>(null, null,null);
+        sentinel = new Node<T>(null, null, null);
+        sentinel.pre = sentinel;
         sentinel.next = sentinel;
-        sentinel.prev = sentinel;
         size = 0;
+    }
+
+    public void addFirst(T item) {
+        sentinel.next = new Node<T>(item, sentinel, sentinel.next);
+        sentinel.next.next.pre = sentinel.next;
+        size += 1;
+    }
+
+    public void addLast(T item) {
+        sentinel.pre.next = new Node<T>(item, sentinel.pre, sentinel);
+        sentinel.pre = sentinel.pre.next;
+        size += 1;
     }
 
     public boolean isEmpty() {
         return size == 0;
     }
 
-    public void addFirst(T item) {
-        sentinel.next = new Node<>(item, sentinel, sentinel.next);
-        sentinel.next.next.prev = sentinel.next; // circular magic!
-        size += 1;
-    }
-
-    public void addLast(T item) {
-        sentinel.prev.next = new Node<>(item, sentinel.prev, sentinel);
-        sentinel.prev = sentinel.prev.next;
-        size += 1;
-    }
-
     public int size() {
         return size;
-    }
-
-    public void printDeque() {
-        int total = size;
-        Node<T> ptr = sentinel.next;
-        String ret = "";
-        while (total > 0) {
-            ret = ret + ptr.value + " ";
-            total -= 1;
-            ptr = ptr.next;
-        }
-        System.out.println(ret.substring(0, ret.length() - 1));
     }
 
     public T removeFirst() {
         if (size == 0) {
             return null;
         }
-        T value = sentinel.next.value;
-        sentinel.next.prev = null;
-        sentinel.next.next.prev = sentinel;
+        T removedItemValue = sentinel.next.getValue();
         sentinel.next = sentinel.next.next;
         size -= 1;
-        return value;
+        return removedItemValue;
     }
 
     public T removeLast() {
         if (size == 0) {
             return null;
         }
-        T value = sentinel.prev.value;
-        sentinel.prev.prev.next = sentinel;
-        sentinel.prev = sentinel.prev.prev;
+        T removedItemValue = sentinel.pre.getValue();
+        sentinel.pre.pre.next = sentinel;
         size -= 1;
-        return value;
+        return removedItemValue;
     }
 
     public T get(int index) {
-       if (index > size - 1 || index < 0) {
-           return null;
-       }
-       if (index > size / 2) {
-           // from last to front
-           int curIdx = size - 1;
-           Node<T> ptr = sentinel.prev;
-           while (curIdx >= index) {
-               if (curIdx == index) {
-                   return ptr.value;
-               }
-               curIdx -= 1;
-               ptr = ptr.prev;
-           }
-       } else {
-           // from front to last
-           int curIdx = 0;
-           Node<T> ptr = sentinel.next;
-           while (curIdx <= index) {
-               if (curIdx == index) {
-                   return ptr.value;
-               }
-               curIdx += 1;
-               ptr = ptr.next;
-           }
-       }
-        return null;
-    }
-
-    private T getElementHelper(Node<T> s, int index, int cur, boolean reverse) {
-        if (index == cur) {
-           return s.value;
-        }
-        if (reverse) {
-            return getElementHelper(s.prev, index, cur - 1, true);
-        } else {
-            return getElementHelper(s.next, index, cur + 1, false);
-        }
-
-    }
-    public T getRecursive(int index) {
-        if (index > size - 1 || index < 0) {
+        if (index < 0 && index >= size) {
             return null;
         }
-        boolean reverse = index > size / 2;
-        return reverse ? getElementHelper(sentinel.prev, index, size - 1, true)
-                : getElementHelper(sentinel.next, index, 0, false);
+        int idx;
+        Node<T> node;
+        if (index < size / 2) {
+            idx = 0;
+            node = sentinel.next;
+
+            while (idx < index) {
+                node = node.next;
+                idx += 1;
+            }
+        } else {
+            idx = size - 1;
+            node = sentinel.pre;
+
+            while (idx > index) {
+                node = node.pre;
+                idx -= 1;
+            }
+        }
+        return node.getValue();
+    }
+
+    public T getRecursive(int index) {
+        if (index < 0 && index >= size) {
+            return null;
+        }
+        return getHelper(index).getValue();
+    }
+
+    public void printDeque() {
+        Node<T> node = sentinel;
+        for (int i = 0; i < size; i++) {
+            node = node.next;
+            System.out.println(node.getValue());
+        }
+    }
+    /*
+     * get index's Node
+     */
+    private Node<T> getHelper(int index) {
+        if (index == 0) {
+            return sentinel.next;
+        } else {
+            return getHelper(index - 1).next;
+        }
     }
 }
