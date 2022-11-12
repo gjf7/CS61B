@@ -40,6 +40,7 @@ public class LinkedListDeque<T> {
             return null;
         }
         T removedItemValue = sentinel.next.getValue();
+        sentinel.next.next.pre = sentinel;
         sentinel.next = sentinel.next.next;
         size -= 1;
         return removedItemValue;
@@ -50,6 +51,7 @@ public class LinkedListDeque<T> {
             return null;
         }
         T removedItemValue = sentinel.pre.getValue();
+        sentinel.pre = sentinel.pre.pre;
         sentinel.pre.pre.next = sentinel;
         size -= 1;
         return removedItemValue;
@@ -89,11 +91,15 @@ public class LinkedListDeque<T> {
     }
 
     public void printDeque() {
-        Node<T> node = sentinel;
-        for (int i = 0; i < size; i++) {
-            node = node.next;
-            System.out.println(node.getValue());
+        int total = size;
+        Node<T> ptr = sentinel.next;
+        String ret = "";
+        while (total > 0) {
+            ret = ret + ptr.getValue() + " ";
+            ptr = ptr.next;
+            total -= 1;
         }
+        System.out.println(ret.substring(0, ret.length() - 1));
     }
     /*
      * get index's Node
