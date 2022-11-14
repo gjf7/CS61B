@@ -15,6 +15,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     private static final int DEFAULT_SIZE = 16;
     private static final double MAX_LF = 0.75;
+    private static final double MIN_LF = 0.25;
 
     private ArrayMap<K, V>[] buckets;
     private int size;
@@ -109,6 +110,9 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * UnsupportedOperationException. */
     @Override
     public V remove(K key) {
+        if (size > DEFAULT_SIZE && loadFactor() > MIN_LF) {
+            resize(buckets.length / 2);
+        }
         int hashCode = hash(key);
         V removedVal = buckets[hashCode].remove(key);
         if (removedVal != null) size -= 1;
@@ -120,10 +124,9 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * throw an UnsupportedOperationException.*/
     @Override
     public V remove(K key, V value) {
-        int hashCode = hash(key);
-        V removedVal = buckets[hashCode].remove(key, value);
-        if (removedVal != null) size -= 1;
-        return removedVal;
+        if (value == get(key)) {
+            remove(key);
+        }
     }
 
     @Override
